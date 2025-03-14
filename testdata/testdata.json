@@ -1,0 +1,16 @@
+{
+    "base_url": "https://client.avenger.fleetpanda.com/users/login",
+    "valid_user": {
+        "phone" : "9803020822",
+        "password": "password"
+    },
+    "invalid_user": {
+        "phone" : "9803020829",
+        "password": "password"
+    },
+    "invalid_password": {
+        "phone" : "9803020822",
+        "password": "passw111"
+    }
+
+}
