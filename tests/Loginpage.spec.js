@@ -1,7 +1,6 @@
 import LoginPage from '../Pages/LoginPage';
 import testdata from '../testdata/testdata.json';
 import { test, expect } from '@playwright/test';
-import RandomName from '../Pages/RandomName';
 
 test.describe('Run login test', () => {
 

@@ -1,10 +1,22 @@
-import RandomName from "./RandomName";
+import RandomGenerator from "./RandomGenerator";
 import { expect } from "@playwright/test";
-
+/**
+ * Represents the AssetPage class which provides methods to interact with the asset page.
+ * 
+ * @class
+ * @param {object} page - The Playwright page object used for browser interactions.
+ * 
+ * @property {object} page - The Playwright page object.
+ * @property {object} assetName - A randomly generated asset name.
+ * 
+ * @method navigatetoassetpage - Navigates to the asset page and fills out the form to add a new asset.
+ * @method searchassets - Searches for assets by name on the asset page.
+ * @method assetfound - Verifies that the asset with the generated name is visible on the page.
+ */
 class AssetPage {
     constructor(page) {
         this.page = page;
-        this.assetName = new RandomName().generateRandomName();
+        this.assetName = new RandomGenerator().generateRandomName();
     }
 
     async navigatetoassetpage() {
