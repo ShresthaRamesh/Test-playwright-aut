@@ -1,95 +1,105 @@
-
 import RandomGenerator from "./RandomGenerator";
 import { expect } from "@playwright/test";
+const BasePage = require('./BasePage');
 
 /**
  * Represents a page for managing driver operations.
- * Utilizes the RandomGenerator class to generate random driver details.
+ * Extends BasePage for common functionality and uses RandomGenerator for generating driver details.
  * 
- * @constructor
+ * @class
+ * @extends BasePage
  * @param {object} page - The Playwright page object for interacting with the browser.
- * 
- * @property {string} driverName - Randomly generated driver name.
- * @property {string} phoneNumber - Randomly generated phone number.
- * @property {string} email - Randomly generated email address.
- * 
- * @method createNewDriver - Automates the process of creating a new driver by navigating to the driver section,
- *                           filling in driver details, submitting the form, and verifying the driver creation.
- * 
- * @method navigateToDriverSection - Navigates to the driver section in the application.
- * 
- * @method fillDriverDetails - Fills in the driver details form with the generated driver name, phone number, and email.
- * 
- * @method submitDriverForm - Submits the driver creation form.
- * 
- * @method searchdriver - Searches for the newly created driver using the driver name.
- * 
- * @method driverfound - Verifies that the driver has been successfully created and is visible on the page.
+ * @param {Object} [driverDetails] - Optional driver details. If not provided, will be generated.
  */
-
-class DriverPage {
-    constructor(page) {
-        this.page = page;
-        const { drivername } = new RandomGenerator().generateRandomName();
-        this.driverName = drivername;
-        this.phoneNumber = new RandomGenerator().generateRandomPhoneNumber();
-        this.email = new RandomGenerator().generateRandomEmail();
+class DriverPage extends BasePage {
+    constructor(page, driverDetails) {
+        super(page);
+        const randomGen = new RandomGenerator();
+        this.driverName = driverDetails?.driverName || randomGen.generateRandomName().drivername;
+        this.phoneNumber = driverDetails?.phoneNumber || randomGen.generateRandomPhoneNumber();
+        this.email = driverDetails?.email || randomGen.generateRandomEmail();
     }
 
+    /**
+     * Creates a new driver with generated details
+     * @throws {Error} If driver creation fails
+     */
     async createNewDriver() {
-        const { driverName, phoneNumber, email } = this;
         try {
             await this.navigateToDriverSection();
-            await this.fillDriverDetails(driverName, phoneNumber, email);
+            await this.fillDriverDetails();
             await this.submitDriverForm();
-            await this.searchdriver();
-            await this.driverfound();
+            await this.searchDriver();
+            await this.verifyDriverFound();
         } catch (error) {
-            console.error("Error creating new driver:", error);
-            throw error;
+            throw new Error(`Failed to create new driver: ${error.message}`);
         }
     }
 
+    /**
+     * Navigates to the driver section
+     * @private
+     */
     async navigateToDriverSection() {
-        const { page } = this;
-        await page.getByRole('button', { name: 'Operations ' }).click();
-        await page.getByRole('link', { name: 'Self Customer' }).click();
-        await page.getByRole('link', { name: 'Drivers' }).click();
-        await page.getByRole('button', { name: 'Add Driver' }).click();
+        await this.clickByRole('button', 'Operations');
+        await this.clickByRole('link', 'Self Customer');
+        await this.clickByRole('link', 'Drivers');
+        await this.clickByRole('button', 'Add Driver');
     }
 
-    async fillDriverDetails(driverName, phoneNumber, email) {
-        const { page } = this;
-        await page.getByRole('textbox', { name: 'NAME *' }).fill(driverName);
-        await page.getByRole('textbox', { name: 'ERP ID' }).fill('123');
-        await page.getByRole('textbox', { name: 'EMAIL' }).fill(email);
-        await page.getByRole('textbox', { name: 'phone' }).fill(phoneNumber);
-        await page.getByRole('group').filter({ hasText: 'statusSelect...' }).locator('svg').click();
-        await page.getByRole('button', { name: 'Company' }).click();
-        await page.locator('label').filter({ hasText: 'PRIMARY ?' }).locator('span').first().click();
+    /**
+     * Fills in the driver details form
+     * @private
+     */
+    async fillDriverDetails() {
+        const { driverName, phoneNumber, email } = this;
+        
+        // Fill basic information
+        await this.fillByRole('textbox', 'NAME *', driverName);
+        await this.fillByRole('textbox', 'ERP ID', '123');
+        await this.fillByRole('textbox', 'EMAIL', email);
+        await this.fillByRole('textbox', 'phone', phoneNumber);
+        
+        // Select status
+        await this.clickWithRetry('[role="group"]:has-text("statusSelect...") svg');
+        await this.clickByRole('button', 'Company');
+        
+        // Set as primary
+        await this.clickWithRetry('label:has-text("PRIMARY ?") span');
     }
 
+    /**
+     * Submits the driver creation form
+     * @private
+     */
     async submitDriverForm() {
-        const { page } = this;
-        await page.getByRole('button', { name: 'Create' }).click();
+        await this.clickByRole('button', 'Create');
+        await this.waitForNavigation();
     }
 
-
-    async searchdriver(){
-        const { page, driverName } = this;
-        await page.getByRole('link', { name: 'Drivers', exact: true }).click();
-        await page.getByRole('textbox', { name: 'Search by name, phone, email' }).click();
-        await page.getByRole('textbox', { name: 'Search by name, phone, email' }).fill(driverName);
-        await page.getByText(driverName).first().click();     
+    /**
+     * Searches for the created driver
+     * @private
+     */
+    async searchDriver() {
+        const { driverName } = this;
+        await this.clickByRole('link', 'Drivers');
+        await this.fillByRole('textbox', 'Search by name, phone, email', driverName);
+        await this.clickWithRetry(`text=${driverName}`);
     }
 
-    async driverfound(){
-        const {page, driverName} = this;
+    /**
+     * Verifies that the driver is visible on the page
+     * @private
+     * @throws {Error} If driver is not found
+     */
+    async verifyDriverFound() {
+        const { driverName } = this;
         try {
-            await expect(page.getByRole('heading', { name: `${driverName}` })).toBeVisible();
+            await this.textToBeVisible(driverName);
+            await expect(this.page.getByRole('heading', { name: driverName })).toBeVisible();
         } catch (error) {
-            console.error("Driver not found:", error);
-            throw error; // Rethrow the error to ensure the test fails
+            throw new Error(`Driver ${driverName} not found: ${error.message}`);
         }
     }
 }
