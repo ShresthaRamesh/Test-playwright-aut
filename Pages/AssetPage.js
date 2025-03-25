@@ -10,6 +10,7 @@ const BasePage = require('./BasePage');
  * @param {object} page - The Playwright page object used for browser interactions.
  * @param {string} [assetName] - Optional asset name. If not provided, will be generated.
  */
+
 class AssetPage extends BasePage {
     constructor(page, assetName) {
         super(page);
