@@ -15,11 +15,13 @@ test('Assets Creation', async ({ page }) => {
     const assetPage = new AssetPage(page);
     await assetPage.navigateToAssetPage();
 
-    await expect(page.getByText('Customer asset create').first()).toBeVisible();
+    await expect(page.getByText('Customer asset created').first()).toBeVisible();
     console.log('Assets Created Successfully.');
 
     //to verify the assets
     await assetPage.searchAssets();
+    console.log('Asset search')
     await assetPage.assetFound();
+    console.log("Asset found")
 
 });

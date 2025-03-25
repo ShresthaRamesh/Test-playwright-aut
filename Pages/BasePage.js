@@ -74,8 +74,14 @@ class BasePage {
         await this.page.getByRole(role, { name }).click();
     }
 
-    async textToBeVisible(name){
-        await this.page.getByText(name)
+    /**
+     * Verify if text is visible on the page
+     * @param {string} name - The text to verify
+     * @returns {Promise<void>}
+     */
+    async textToBeVisible(name) {
+        const element = this.page.getByText(name, { exact: true });
+        await expect(element).toBeVisible();
     }
 
     /**

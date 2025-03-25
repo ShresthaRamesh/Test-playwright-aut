@@ -1,8 +1,8 @@
 class RandomGenerator {
     generateRandomName(length = 5) {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        const assetName = "FP-" + Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('') + "-Asset";
-        const drivername = Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('') + "-driver";
+        const assetName = "FP-A-" + Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+        const drivername = "FP-D-" +Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('') ;
         return { assetName, drivername };
     }
 

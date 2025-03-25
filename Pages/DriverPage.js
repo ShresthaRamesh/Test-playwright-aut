@@ -55,8 +55,8 @@ class DriverPage extends BasePage {
         const { driverName, phoneNumber, email } = this;
         
         // Fill basic information
-        await this.fillByRole('textbox', 'NAME *', driverName);
-        await this.fillByRole('textbox', 'ERP ID', '123');
+        await this.fillByRole('textbox', 'NAME *', driverName + "Dr");
+        await this.fillByRole('textbox', 'ERP ID', driverName);
         await this.fillByRole('textbox', 'EMAIL', email);
         await this.fillByRole('textbox', 'phone', phoneNumber);
         
@@ -85,7 +85,7 @@ class DriverPage extends BasePage {
         const { driverName } = this;
         await this.clickByRole('link', 'Drivers');
         await this.fillByRole('textbox', 'Search by name, phone, email', driverName);
-        await this.clickWithRetry(`text=${driverName}`);
+        await this.clickElement(`text=${driverName}`);
     }
 
     /**

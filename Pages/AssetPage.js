@@ -14,7 +14,7 @@ const BasePage = require('./BasePage');
 class AssetPage extends BasePage {
     constructor(page, assetName) {
         super(page);
-        this.assetName = assetName || new RandomGenerator().generateRandomName().name;
+        this.assetName = assetName || new RandomGenerator().generateRandomName().assetName;
     }
 
     /**
@@ -47,8 +47,9 @@ class AssetPage extends BasePage {
         const { assetName } = this;
         
         // Fill basic details
-        await this.fillByRole('textbox', 'NAME', assetName);
-        await this.fillByRole('textbox', 'UNIQUE ID *', assetName);
+        await this.waitForElement('text=Add New Asset')
+        await this.fillByRole(  'textbox', 'NAME', assetName);
+        await this.fillByRole('textbox', 'UNIQUE ID *', assetName + assetName);
         
         // Select location
         await this.clickWithRetry('div:nth-child(4) > .chakra-form-control > .css-79elbk > .css-bu9dy5 > .css-tn8go7 > .css-18euh9p');
@@ -59,8 +60,7 @@ class AssetPage extends BasePage {
         await this.clickByRole('button', 'Bio', { exact: true, first: true });
         
         // Select status
-        await this.clickWithRetry('[role="group"]:has-text("statusSelect...") svg');
-        await this.clickByRole('button', 'Company', { exact: true });
+        await this.page.locator('label').filter({ hasText: 'USE IN DELIVERY' }).locator('span').first()
         
         // Set location and compartment
         await this.clickByRole('button', 'Use ShipTo Location', { exact: true });
@@ -79,12 +79,13 @@ class AssetPage extends BasePage {
             // await this.clickByRole('link', 'Assets', { exact: true, first: true });
             
             // Wait for search field and fill it
-            await this.page.waitForLoadState('networkidle');
-            await this.fillByRole('textbox', 'Search by name, shipto,', assetName);
+            await this.fillByRole('textbox', 'Search by name, shipto,',assetName);
             
             // Wait for and click the search result
-            await this.waitForElement(`text=${assetName}`);
-            await this.clickElement(`text=${assetName}`);
+            // await this.page.getByRole('gridcell', { name: assetName, exact: true })
+            await this.clickElement(`text=${assetName + assetName}`);
+
+
         } catch (error) {
             throw new Error(`Failed to search for assets: ${error.message}`);
         }
@@ -95,12 +96,11 @@ class AssetPage extends BasePage {
      * @throws {Error} If asset is not found
      */
     async assetFound() {
+        const { assetName } = this;
         try {
-            const { assetName } = this;
-            await this.textToBeVisible(assetName);
             await expect(this.page.getByRole('heading', { name: assetName })).toBeVisible();
         } catch (error) {
-            throw new Error(`Asset ${this.assetName} not found: ${error.message}`);
+            throw new Error(`Asset ${assetName} not found: ${error.message}`);
         }
     }
 }
