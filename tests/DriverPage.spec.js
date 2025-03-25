@@ -9,7 +9,7 @@ test('Driver Creation', async ({ page }) => {
     const driverPage = new DriverPage(page);
 
     try {
-        await loginPage.perform_valid_login(
+        await loginPage.performValidLogin(
             testdata.base_url,
             testdata.valid_user.phone,
             testdata.valid_user.password

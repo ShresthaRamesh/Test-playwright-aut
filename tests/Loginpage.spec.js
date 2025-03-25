@@ -9,7 +9,7 @@ test.describe('Run login test', () => {
         const loginPage = new LoginPage(page);
         
         // Perform login with valid credentials
-        await loginPage.perform_valid_login(
+        await loginPage.performValidLogin(
             testdata.base_url,
             testdata.valid_user.phone,
             testdata.valid_user.password
@@ -25,7 +25,7 @@ test.describe('Run login test', () => {
         const loginPage = new LoginPage(page);
         
         // Attempt login with invalid phone
-        await loginPage.perform_invalid_username(
+        await loginPage.performInvalidUsernameLogin(
             testdata.base_url,
             testdata.invalid_user.phone,
             testdata.invalid_user.password
@@ -41,7 +41,7 @@ test.describe('Run login test', () => {
         const loginPage = new LoginPage(page);
         
         // Attempt login with invalid password
-        await loginPage.perform_invalid_password(
+        await loginPage.performInvalidPasswordLogin(
             testdata.base_url,
             testdata.invalid_user.phone,
             testdata.invalid_user.password
