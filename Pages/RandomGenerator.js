@@ -1,9 +1,9 @@
 class RandomGenerator {
     generateRandomName(length = 5) {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        const name = "FP-" + Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('') + "-Asset";
+        const assetName = "FP-" + Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('') + "-Asset";
         const drivername = Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('') + "-driver";
-        return { name, drivername };
+        return { assetName, drivername };
     }
 
     generateRandomPhoneNumber(length = 10) {

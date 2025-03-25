@@ -16,12 +16,14 @@ import { expect } from "@playwright/test";
 class AssetPage {
     constructor(page) {
         this.page = page;
-        this.assetName = new RandomGenerator().generateRandomName();
+        const {assetName} = new RandomGenerator().generateRandomName();
+        this.assetName= assetName;
     }
 
     async navigatetoassetpage() {
         const { page, assetName } = this;
         await page.getByRole('button', { name: 'Operations ' }).click();
+        // await page.locator("xpath=//button[@data-testid='top-navbar-item']//span/div[contains(text(), 'Operations')]").click();
         await page.getByRole('link', { name: 'Self Customer' }).click();
         await page.getByRole('button', { name: 'Add Asset' }).click();
         await page.getByRole('textbox', { name: 'NAME' }).fill(assetName);
